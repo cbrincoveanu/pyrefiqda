@@ -1,75 +1,70 @@
-# pyrefiqda
-A modern Python parser mapping REFI-QDA qualitative research files (.qdpx) to strict Pydantic models for seamless integration.
+# pyrefiqda Documentation
 
-## Installation
+Welcome to the documentation for **pyrefiqda**!
 
-```bash
-pip install pyrefiqda
-```
+This library provides a strictly-typed, Pydantic-based interface for the REFI-QDA qualitative data exchange standard. It is designed specifically to allow programmatic interaction with qualitative research projects.
+
+## Navigating these docs
+
+* **[API Reference](api.md):** Learn how to use the `RefiProject` and `RefiCodebook` handler classes to load, save, and manage files.
+* **[Data Models](models.md):** View the comprehensive list of Pydantic models generated from the REFI-QDA standard, including Projects, Users, Codes, and Transcripts.
+
+## Core Features
+* **100% Type-Hinted:** Built entirely on Pydantic `BaseModel` classes, ensuring perfect IDE autocomplete and seamless integration with frameworks like PydanticAI.
+* **Standard Compliant:** Reads and writes `.qdpx` (Project) and `.qdc` (Codebook) formats.
+* **Media Management:** Includes helper functions to abstract away REFI-QDA's internal URI structures, making it easy to read transcripts and package media back into archives.
 
 ## Quickstart
+`pyrefiqda` makes it incredibly easy to programmatically assemble qualitative coding projects from scratch, package media files, and export standard `.qdpx` files ready for  exchange and review.
 
-### 1. Working with complete Projects (.qdpx)
-```python
-from pyrefiqda import RefiProject
-
-# Load an existing project (e.g., from NVivo, MAXQDA)
-project = RefiProject.load("my_research.qdpx")
-
-# Iterate through your codebook
-for code in project.code_book.codes.code:
-    print(f"Code: {code.name} (Color: {code.color})")
-
-# Save a modified project back to a file
-RefiProject.save(project, "my_research_updated.qdpx")
-```
-
-### 2. Working with Standalone Codebooks (.qdc)
-If you only need to exchange coding hierarchies, REFI-QDA provides the lightweight `.qdc` format.
-```python
-from pyrefiqda import RefiCodebook
-
-# Load an existing codebook
-codebook = RefiCodebook.load("initial_codes.qdc")
-
-# Add a new code
-from pyrefiqda.models import CodebookCodeType
-import uuid
-
-new_code = CodebookCodeType(
-    guid=str(uuid.uuid4()),
-    name="Example code",
-    color="#FF5733",
-    is_catch_all=False,
-    is_codable=True
-)
-codebook.codes.code.append(new_code)
-
-# Save it back
-RefiCodebook.save(codebook, "updated_codes.qdc")
-```
-
-### 3. Creating a Project from Scratch
 ```python
 import uuid
-from pyrefiqda.models import Project, UsersType, UserType
-from pyrefiqda import RefiProject
-
-# Create a user
-user = UserType(guid=str(uuid.uuid4()), name="Coder")
-users = UsersType(user=[user])
-
-# Initialize an empty project ready for qualitative analysis
-my_project = Project(
-    name="Example study",
-    origin="pyrefiqda",
-    guid=str(uuid.uuid4()),
-    users=users
+from pyrefiqda.refiproject import RefiProject
+from pyrefiqda.models import (
+    Project, UsersType, UserType, ProjectCodeBookType, 
+    ProjectCodesType, ProjectCodeType, SourcesType, 
+    TextSourceType, PlainTextSelectionType, CodingType, CodeRefType
 )
 
-RefiProject.save(my_project, "new_study.qdpx")
+# 1. Import a raw transcript into the REFI-QDA working directory
+working_dir = "./temp_project"
+internal_uri = RefiProject.import_source_file("raw_data/interview.txt", working_dir)
+
+# 2. Define a Coder and an emergent Code
+user = UserType(guid=str(uuid.uuid4()), name="Coder 1")
+code = ProjectCodeType(
+    guid=str(uuid.uuid4()), name="Theme 1", color="#FF0000"
+)
+
+# 3. Create a coding selection (e.g., characters 0 through 100)
+selection = PlainTextSelectionType(
+    guid=str(uuid.uuid4()),
+    name="Identified Segment",
+    start_position=0,
+    end_position=100,
+    creating_user=user.guid,
+    coding=[CodingType(
+        guid=str(uuid.uuid4()), 
+        creating_user=user.guid, 
+        code_ref=CodeRefType(target_guid=code.guid)
+    )]
+)
+
+# 4. Assemble the final Pydantic Project
+project = Project(
+    name="GTM Study",
+    users=UsersType(user=[user]),
+    code_book=ProjectCodeBookType(codes=ProjectCodesType(code=[code])),
+    sources=SourcesType(text_source=[
+        TextSourceType(
+            guid=str(uuid.uuid4()), 
+            name="Interview 1", 
+            plain_text_path=internal_uri, 
+            plain_text_selection=[selection]
+        )
+    ])
+)
+
+# 5. Export to a standard .qdpx file (zipping the XML and the media files together)
+RefiProject.save(project, "study.qdpx", source_media_dir=working_dir + "/sources")
 ```
-
-## Why this exists
-
-In qualitative studies, researchers use the REFI-QDA standard to exchange data. However, previous Python tools were GUI-heavy or outdated. `pyrefiqda` uses `xsdata` to auto-generate pure Pydantic models directly from the official XML schema, meaning you get flawless type-hinting, validation, and zero parsing bloat.

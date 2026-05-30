@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyrefiqda"
-version = "0.2.1"
+version = "0.3.0"
 description = "A modern, Pydantic-based parser for REFI-QDA (.qdpx) qualitative research files."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -43,4 +43,6 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/cbrincoveanu/pyrefiqda"
-Issues = "https://github.com/yourusername/pyrefiqda/issues"
+Documentation = "https://cbrincoveanu.github.io/pyrefiqda"
+Repository = "https://github.com/cbrincoveanu/pyrefiqda"
+Issues = "https://github.com/cbrincoveanu/pyrefiqda/issues"
