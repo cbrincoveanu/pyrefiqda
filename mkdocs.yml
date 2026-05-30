@@ -1,0 +1,21 @@
+site_name: pyrefiqda
+site_description: A modern Python parser for REFI-QDA (.qdpx) qualitative research files.
+repo_url: https://github.com/cbrincoveanu/pyrefiqda
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: deep purple
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+
+nav:
+  - Home: index.md
+  - API Reference: api.md
+  - Data Models: models.md
