@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyrefiqda"
+version = "0.2.1"
+description = "A modern, Pydantic-based parser for REFI-QDA (.qdpx) qualitative research files."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Constantin Brîncoveanu", email = "brincoveanu@wiwi.uni-frankfurt.de"},
+]
+keywords = ["qualitative-research", "refi-qda", "pydantic", "qda"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Sociology",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "xsdata>=24.0",
+    "xsdata-pydantic>=24.0",
+    "lxml>=5.0"
+]
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "build",
+    "twine"
+]
+
+[project.urls]
+Homepage = "https://github.com/cbrincoveanu/pyrefiqda"
+Issues = "https://github.com/yourusername/pyrefiqda/issues"
