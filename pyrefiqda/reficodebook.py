@@ -52,7 +52,7 @@ class RefiCodebook:
         file_path = Path(file_path)
         
         serializer = XmlSerializer()
-        xml_string = serializer.render(codebook)
+        xml_string = serializer.render(codebook, ns_map={None: "urn:QDA-XML:codebook:1.0"})
         
         # Write the XML string directly to the file
         file_path.write_text(xml_string, encoding="utf-8")

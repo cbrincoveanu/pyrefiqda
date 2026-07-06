@@ -84,7 +84,7 @@ class RefiProject:
         # 1. Serialize the Pydantic model back to an XML string
         config = SerializerConfig(xml_declaration=True, encoding="UTF-8")
         serializer = XmlSerializer(config=config)
-        xml_string = serializer.render(project)
+        xml_string = serializer.render(project, ns_map={None: "urn:QDA-XML:project:1.0"})
         
         # 2. Package it into a .qdpx (zip) file
         with zipfile.ZipFile(file_path, 'w') as zip_ref:

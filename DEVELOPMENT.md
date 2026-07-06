@@ -20,6 +20,13 @@ If the REFI-QDA standard updates, replace the `.xsd` files in the `refi-qda-stan
 xsdata generate refi-qda-standard/ --output pydantic --package pyrefiqda.models
 ```
 
+## Testing
+
+```bash
+pip install pytest
+pytest
+```
+
 ## Publishing to PyPI
 Remember to increment the `version` in `pyproject.toml` before building.
 
